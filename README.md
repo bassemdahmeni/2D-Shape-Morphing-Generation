@@ -51,7 +51,47 @@ Morphing2D provides a complete pipeline for **learning-based 2D shape morphing**
 **Output:** Trained CVAE model and smoothness analysis.
 
 ---
+## 🏗️ Model Architecture
+Conditional Variational Autoencoder (CVAE)
+Our CVAE architecture is specifically designed for sequence generation conditioned on source and target shapes:
 
+**Encoder Pathway**
+
+Input: Concatenated morphing sequence (2800D) + condition (800D) = 3600D
+
+Hidden Layers: 2 fully connected layers with ReLU activation (256 units each)
+
+Output: Mean (μ) and Log-Variance (logσ²) vectors in 64D latent space
+
+**Decoder Pathway**
+
+Input: Sampled latent vector z (64D) + condition vector (800D)
+
+Hidden Layers: 2 fully connected layers with ReLU activation (256 units each)
+
+Output: Reconstructed morphing sequence (7 frames × 200 points × 2D = 2800D)
+
+**Condition Mechanism**
+
+Condition: Concatenated source + target contours (400 points × 2D = 800D)
+
+Applied in: Both encoder (concatenated with input) and decoder (concatenated with latent)
+
+**Loss Function**
+
+Total Loss: Reconstruction Loss + β × KL Divergence
+
+Reconstruction Loss: MSE between generated and SRVF ground truth sequences
+
+KL Divergence: Regularization enforcing Gaussian latent space (β = 1.0)
+
+Training: Adam optimizer, learning rate = 1e-4
+
+**Architecture Diagram:**
+![Alt text](model_architecture.png)
+
+
+---
 ## 🚀 Quick Start
 
 1. **Generate Training Data**
